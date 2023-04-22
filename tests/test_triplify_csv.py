@@ -1,22 +1,27 @@
-from triplify_csv.triplify_csv import rr, Rml, process, CsvOptions
-from click.testing import CliRunner
 import pytest
-import rdflib
-from rdflib import Literal, Dataset, XSD
+#import rdflib
+from rdflib import Literal
+from rdflib import Dataset
 import csv
-from rdflib.plugins import sparql
-from rdflib import Namespace, Graph, URIRef
-from rdflib.namespace import XSD, RDF, RDFS, FOAF, NamespaceManager
+#from rdflib.plugins import sparql
+from rdflib import Graph, URIRef
+from rdflib.namespace import Namespace, RDF, RDFS, FOAF, NamespaceManager, XSD
 import re
 from collections import namedtuple
 from itertools import takewhile
 import os
 from pathlib import Path
+from click.testing import CliRunner
+from triplify_csv.triplify_csv import rr, Rml, process, CsvOptions
+import warnings
+warnings.filterwarnings("error")
 
 DATA_DIR = str(Path(__file__).parent / "data")
+#DATA_DIR =  os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+#DATA_DIR =  os.path.abspath(os.path.join(DATA_DIR, "data"))
 
-def path_as_str(tmpdir_factory, outfile):
-	return str(tmpdir_factory.mktemp("triples").join(outfile))
+def path_as_str(tmp_path_factory, outfile):
+	return str(tmp_path_factory.mktemp("triples") / outfile)
 
 
 @pytest.fixture
@@ -81,7 +86,7 @@ def R2RMLTC0009a():
 	
 @pytest.fixture
 def R2RMLTC0015a():
-	return "./data/R2RMLTC0015a.ttl"
+	return DATA_DIR + "/R2RMLTC0015a.ttl"
 	
 	
 @pytest.fixture
@@ -114,77 +119,77 @@ def not_student():
 
 @pytest.fixture
 def labels_en():
-	return "./data/labels_en.csv"
+	return DATA_DIR + "/labels_en.csv"
 	
 	
 @pytest.fixture
 def labels_es():
-	return "./data/labels_es.csv"
+	return DATA_DIR + "/labels_es.csv"
 	
 
 @pytest.fixture(scope='session')
-def outputfile_ttl(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output.ttl")
+def outputfile_ttl(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output.ttl")
 
 	
 @pytest.fixture(scope='session')
-def outputfile_7b_nquad(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output7b.nq")
+def outputfile_7b_nquad(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output7b.nq")
 	
 	
 @pytest.fixture(scope='session')
-def outputfile_7c(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output7c.ttl")
+def outputfile_7c(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output7c.ttl")
 	
 	
 @pytest.fixture(scope='session')
-def outputfile_7d(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output7d.ttl")
+def outputfile_7d(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output7d.ttl")
 	
 	
 @pytest.fixture(scope='session')
-def outputfile_7e(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output7e.nq")
+def outputfile_7e(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output7e.nq")
 
 
 @pytest.fixture(scope='session')
-def outputfile_7f(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output7f.nq")
+def outputfile_7f(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output7f.nq")
 
 
 @pytest.fixture(scope='session')
-def outputfile_7g(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output7g.ttl")
+def outputfile_7g(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output7g.ttl")
 	
 	
 @pytest.fixture(scope='session')
-def outputfile_7h(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output7h.ttl")
+def outputfile_7h(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output7h.ttl")
 	
 	
 @pytest.fixture
-def outputfile_8a(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output8a.ttl")
+def outputfile_8a(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output8a.ttl")
 	
 	
 @pytest.fixture(scope='session')
-def outputfile_8b(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output8b.ttl")
+def outputfile_8b(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output8b.ttl")
 	
 	
 @pytest.fixture(scope='session')
-def outputfile_8c(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output8c.ttl")
+def outputfile_8c(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output8c.ttl")
 	
 	
 @pytest.fixture(scope='session')
-def outputfile_9a(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output9a.ttl")
+def outputfile_9a(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output9a.ttl")
 
 
 @pytest.fixture(scope='session')
-def outputfile_15a(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output15a.ttl")
+def outputfile_15a(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output15a.ttl")
 	
 	
 @pytest.fixture
@@ -208,18 +213,18 @@ def Datermlutf():
 
 	
 @pytest.fixture(scope='session')
-def outputfile_date_ttl(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output_date.ttl")
+def outputfile_date_ttl(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output_date.ttl")
 	
 	
 @pytest.fixture(scope='session')
-def outputfile_dateutf_ttl(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output_dateutf.ttl")
+def outputfile_dateutf_ttl(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output_dateutf.ttl")
 	
 	
 @pytest.fixture(scope='session')
-def outputfile_sep_ttl(tmpdir_factory):
-	return path_as_str(tmpdir_factory,"output_sep.ttl")	
+def outputfile_sep_ttl(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output_sep.ttl")	
 
 
 @pytest.fixture
@@ -266,7 +271,7 @@ def test_triplify_csv_examples(tmp_path, Student, R2RMLTC0007a):
 		assert i == 1
 		
 		
-  
+
 	
 def test_create_triples7a(R2RMLTC0007a, Student):
 	rml = Rml()
@@ -991,6 +996,7 @@ def test_load_create_write_out15a(R2RMLTC0015a, labels_en, labels_es, outputfile
 	rml.loadFile(R2RMLTC0015a, [labels_en, labels_es])
 	rml.create_triples()
 	rml.write_file(outputfile_15a)
+	print("location is " + outputfile_15a)
 	g = Graph()
 	g.parse(outputfile_15a, format="ttl")
 	i = 0
@@ -1002,7 +1008,7 @@ def test_load_create_write_out15a(R2RMLTC0015a, labels_en, labels_es, outputfile
 		
 	assert i == 1
 	
-	
+
 def test_create_write_date(Daterml, Datecsv,  outputfile_date_ttl):
 		rml = Rml()
 		
@@ -1074,3 +1080,4 @@ def test_create_write_separator(seprml, sepcsv, outputfile_sep_ttl):
 		
 	assert i == 1
 				
+

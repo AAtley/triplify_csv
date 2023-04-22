@@ -1,7 +1,7 @@
-from rdflib import Graph, Literal, URIRef, Namespace, Dataset, BNode
+from rdflib import Graph, Literal, URIRef, Dataset, BNode
 import csv
-from rdflib.plugins import sparql
-from rdflib.namespace import XSD, RDF, FOAF 
+#from rdflib.plugins import sparql
+from rdflib.namespace import XSD, RDF, FOAF, Namespace
 import re
 from itertools import takewhile
 import os
@@ -51,6 +51,10 @@ class CsvInfo:
 		if self.csvfile:
 			self.csvfile.close()
 			
+	def closefile(self):
+		if self.csvfile:
+			self.csvfile.close()
+					
 			
 	def get_restarted_reader(self):
 		if self.csvfile.closed:
@@ -113,6 +117,11 @@ class Rml:
 					self.errors.append(err)
 					
 					
+	def close_csvs(self):
+		for csvInfo in self.csvInfoList:
+			csvInfo.closefile()
+					
+					
 	# get the csvinfo that matches this tablename
 	def get_csvInfo_by_tablename(self, tablename):
 		for csvInfo in self.csvInfoList:
@@ -137,7 +146,8 @@ class Rml:
 	
 	def get_baseURI(self):
 		return self.base
-		
+	
+	'''	
 	def runSparql(self,qstring):
 		base = Namespace(URIRef(self.base))
 		
@@ -148,7 +158,7 @@ class Rml:
 		q = sparql.prepareQuery(qstring,initNs= {"" : base,"xsd" : XSD, "rdf" : RDF, "rr" : rr})
 		
 		return self.g.query(q)
-		
+	'''	
 
 	def tmaps(self):
 		tmaps = {}
@@ -413,6 +423,9 @@ class Rml:
 			self.triples.namespace_manager.bind(n[0],n[1])
 		self.triples.namespace_manager.bind('rdf', RDF)	
 	
+		# close any open input files
+		self.close_csvs()
+	
 	def get_literal(self, value, dateformat='%Y-%m-%d', lang=''):
 		
 		try:
@@ -485,6 +498,7 @@ def process(mapfile, csvfile, outfile, separator=',', encoding='utf-8', dateform
 	    raise
 	for e in s.errors:
 		print(e)
+		
 	
 if __name__ == "__main__":
 	process()
