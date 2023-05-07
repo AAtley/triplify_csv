@@ -73,7 +73,7 @@ The configuration file contains a set of mappings for triplify\_csv to follow to
 
 R2RML was not designed for this purpose. R2RML is '.. a language for expressing customized mappings from relational databases to RDF datasets.' (see [https://www.w3.org/TR/r2rml/](https://www.w3.org/TR/r2rml/) ). Triplify\_csv uses a subset of R2RML to express customised mappings from CSV files to RDF datasets. Where R2RML refers to the tables of a database using 'rr:logicalTable' this should be understood in the triplify\_csv use of R2RML as referring to the name (without '.csv') of a corresponding csv file. 'rr:sqlQuery', the term of the R2RML language that lets you express mappings from database queries to RDF isn't supported in the triplify\_csv usage. Also, there is no need to support 'rr:sqlVersion'.
 
-For a complete list of what parts of the R2RML language are supported see the examples in the /tests folder and refer to the R2RML test cases document ([https://www.w3.org/TR/rdb2rdf-test-cases/](https://www.w3.org/TR/rdb2rdf-test-cases/)). As of version 0.2.0 the test cases supported are
+For a complete list of what parts of the R2RML language are supported see the examples in the /tests folder and refer to the R2RML test cases document ([https://www.w3.org/TR/rdb2rdf-test-cases/](https://www.w3.org/TR/rdb2rdf-test-cases/)). As of version 0.3.0 the test cases supported are
 
 - R2RMLTC0007a - Typing resources by relying on rdf:type predicate
 - R2RMLTC0007b - Assigning triples to Named Graphs
@@ -89,6 +89,8 @@ For a complete list of what parts of the R2RML language are supported see the ex
 - R2RMLTC0009a - Generation of triples from foreign key relations
 - R2RMLTC0015a - Generation of language tags for plain literals from a CSV 'table' with language information
 	- note: this test uses a separate CSV file for each language and differs from the original test case (in the [rdf-test-cases page](https://www.w3.org/TR/rdb2rdf-test-cases/)) which uses 'rr:sqlQuery' to select tags in each language from a single table.
+- R2RMLTC0016a to R2RMLTC0016d, setting data types as in these tests for string, integer, real, float, date, timestamp and boolean.  
+	- note: instead of deriving the data type from the sql column, as the subset of r2rml used here does not refer to a database the user must use 'explicitly typed literals' as in section [7.6 Typed Literals](https://www.w3.org/TR/r2rml/#typed-literals) (rr:datatype) of the r2rml standard.
 
 Copyright © 2015 W3C® (MIT, ERCIM, Keio, Beihang). This software or document includes material copied from or derived from 'R2RML: RDB to RDF Mapping Language' [http://www.w3.org/TR/2012/REC-r2rml-20120927/](http://www.w3.org/TR/2012/REC-r2rml-20120927/) and 'R2RML and Direct Mapping Test Cases' [http://www.w3.org/TR/2012/NOTE-rdb2rdf-test-cases-20120814/](http://www.w3.org/TR/2012/NOTE-rdb2rdf-test-cases-20120814/)
 
@@ -161,4 +163,4 @@ The resulting triples in turtle syntax in the 'contactstriples.ttl' file would l
 	    foaf:interest "https://en.m.wikipedia.org/wiki/Spam\_(food)" ;
 	    foaf:name "Mr Bun" .
 
-
+ 

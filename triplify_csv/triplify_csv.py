@@ -354,12 +354,18 @@ class Rml:
 							pom_column = ''
 							pom_object = ''
 							literal_lang = ''
+							lit_datatype = ''
 							if rr('object') in pom:
 								pom_object = pom[rr('object')]
 							if rr('objectMap') in pom and rr('column') in pom[rr('objectMap')]:
 								pom_column = pom[rr('objectMap')][rr('column')]
 								if rr('language') in pom[rr('objectMap')]:
 									literal_lang = pom[rr('objectMap')][rr('language')]
+								else:
+									if rr('datatype') in pom[rr('objectMap')]:
+										lit_datatype = pom[rr('objectMap')][rr('datatype')]
+										
+										
 								
 							# if objectmap in pom and key of this om is also in tmap then it is a refobjmap
 							if rr('objectMap') in pom and str(pom[rr('objectMap')]) in tmaps.keys() and rr('parentTriplesMap') in tmaps[str(pom[rr('objectMap')])] and tmaps[str(pom[rr('objectMap')])][rr('parentTriplesMap')] in tmaps.keys():
@@ -404,7 +410,7 @@ class Rml:
 							
 							elif len(pom_column) > 0 and pom_column in row.keys():
 								
-								object = self.get_literal(row[pom_column],csvinfo.options.dateformat, literal_lang)
+								object = self.get_literal(row[pom_column],csvinfo.options.dateformat, literal_lang, lit_datatype)
 							else:
 								object = URIRef(pom_object)
 	
@@ -426,8 +432,11 @@ class Rml:
 		# close any open input files
 		self.close_csvs()
 	
-	def get_literal(self, value, dateformat='%Y-%m-%d', lang=''):
+	def get_literal(self, value, dateformat='%Y-%m-%d', lang='', lit_datatype=''):
 		
+		if lit_datatype:
+			return Literal(value, datatype = lit_datatype)
+			
 		try:
 			dt = datetime.strptime(value,dateformat).date()
 			return Literal(dt, datatype=XSD.date)

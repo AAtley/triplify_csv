@@ -88,6 +88,26 @@ def R2RMLTC0009a():
 def R2RMLTC0015a():
 	return DATA_DIR + "/R2RMLTC0015a.ttl"
 	
+
+@pytest.fixture
+def R2RMLTC0016a():
+	return DATA_DIR + "/R2RMLTC0016a.ttl"
+
+@pytest.fixture
+def R2RMLTC0016b():
+	return DATA_DIR + "/R2RMLTC0016b.ttl"
+	
+@pytest.fixture
+def R2RMLTC0016c():
+	return DATA_DIR + "/R2RMLTC0016c.ttl"	
+
+@pytest.fixture
+def R2RMLTC0016d():
+	return DATA_DIR + "/R2RMLTC0016d.ttl"
+	
+@pytest.fixture
+def R2RMLTC0016e():
+	return DATA_DIR + "/R2RMLTC0016e.ttl"	
 	
 @pytest.fixture
 def Student():
@@ -125,7 +145,12 @@ def labels_en():
 @pytest.fixture
 def labels_es():
 	return DATA_DIR + "/labels_es.csv"
-	
+
+
+@pytest.fixture
+def datatypesCsv():
+	return DATA_DIR + "/Patient.csv"
+		
 
 @pytest.fixture(scope='session')
 def outputfile_ttl(tmp_path_factory):
@@ -190,6 +215,31 @@ def outputfile_9a(tmp_path_factory):
 @pytest.fixture(scope='session')
 def outputfile_15a(tmp_path_factory):
 	return path_as_str(tmp_path_factory,"output15a.ttl")
+
+
+@pytest.fixture(scope='session')
+def outputfile_16a(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output16a.ttl")
+	
+	
+@pytest.fixture(scope='session')
+def outputfile_16b(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output16b.ttl")
+	
+	
+@pytest.fixture(scope='session')
+def outputfile_16c(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output16c.ttl")
+	
+	
+@pytest.fixture(scope='session')
+def outputfile_16d(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output16d.ttl")
+	
+	
+@pytest.fixture(scope='session')
+def outputfile_16e(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output16e.ttl")
 	
 	
 @pytest.fixture
@@ -1008,6 +1058,111 @@ def test_load_create_write_out15a(R2RMLTC0015a, labels_en, labels_es, outputfile
 		
 	assert i == 1
 	
+	
+def test_load_create_write_out16a(R2RMLTC0016a, datatypesCsv, outputfile_16a):
+	rml = Rml()
+	# load one rml and 1 or more csvs
+	rml.loadFile(R2RMLTC0016a, [datatypesCsv])
+	rml.create_triples()
+	print(rml.errors)
+	rml.write_file(outputfile_16a)
+	print("location is " + outputfile_16a)
+	g = Graph()
+	g.parse(outputfile_16a, format="ttl")
+	i = 0
+	for s, p, o in g.triples((URIRef('http://example.com/Patient/10'), URIRef('http://example.com/id'), Literal(10, datatype=XSD.positiveInteger))):
+		i += 1
+		print(f"{s} is the subject")
+		print(f"{p} is a predicate")
+		print(f"{o} is an object")
+		
+	assert i == 1
+		
+	
+def test_load_create_write_out16b(R2RMLTC0016b, datatypesCsv, outputfile_16b):
+	rml = Rml()
+	# load one rml and 1 or more csvs
+	rml.loadFile(R2RMLTC0016b, [datatypesCsv])
+	rml.create_triples()
+	print(rml.errors)
+	rml.write_file(outputfile_16b)
+	print("location is " + outputfile_16b)
+	g = Graph()
+	g.parse(outputfile_16b, format="ttl")
+	i = 0
+	for s, p, o in g.triples((URIRef('http://example.com/Patient12'), URIRef('http://example.com/height'), Literal(1.76e+00, datatype=XSD.double))):
+		i += 1
+		print(f"{s} is the subject")
+		print(f"{p} is a predicate")
+		print(f"{o} is an object")
+		
+	assert i == 1
+	i = 0
+	
+	for s, p, o in g.triples((URIRef('http://example.com/Patient12'), URIRef('http://example.com/weight'), Literal(9.031e+01, datatype=XSD.double))):
+		i += 1
+		print(f"{s} is the subject")
+		print(f"{p} is a predicate")
+		print(f"{o} is an object")
+		
+	assert i == 1
+		
+def test_load_create_write_out16c(R2RMLTC0016c, datatypesCsv, outputfile_16c):
+	rml = Rml()
+	# load one rml and 1 or more csvs
+	rml.loadFile(R2RMLTC0016c, [datatypesCsv])
+	rml.create_triples()
+	print(rml.errors)
+	rml.write_file(outputfile_16c)
+	print("location is " + outputfile_16c)
+	g = Graph()
+	g.parse(outputfile_16c, format="ttl")
+	i = 0
+	for s, p, o in g.triples((URIRef('http://example.com/Patient10'), URIRef('http://example.com/birthdate'), Literal('1981-10-10', datatype=XSD.date))):
+		i += 1
+		print(f"{s} is the subject")
+		print(f"{p} is a predicate")
+		print(f"{o} is an object")
+		s
+	assert i == 1
+	i = 0
+	
+	for s, p, o in g.triples((URIRef('http://example.com/Patient12'), URIRef('http://example.com/entrancedate'), Literal('2007-03-12T02:13:14', datatype=XSD.dateTime))):
+		i += 1
+		print(f"{s} is the subject")
+		print(f"{p} is a predicate")
+		print(f"{o} is an object")
+		
+	assert i == 1
+		
+def test_load_create_write_out16d(R2RMLTC0016d, datatypesCsv, outputfile_16d):
+	rml = Rml()
+	# load one rml and 1 or more csvs
+	rml.loadFile(R2RMLTC0016d, [datatypesCsv])
+	rml.create_triples()
+	print(rml.errors)
+	rml.write_file(outputfile_16d)
+	print("location is " + outputfile_16d)
+	g = Graph()
+	g.parse(outputfile_16d, format="ttl")
+	i = 0
+	for s, p, o in g.triples((URIRef('http://example.com/Patient10'), URIRef('http://example.com/paid'), Literal(False, datatype=XSD.boolean))):
+		i += 1
+		print(f"{s} is the subject")
+		print(f"{p} is a predicate")
+		print(f"{o} is an object")
+		s
+	assert i == 1
+	i = 0
+	
+	for s, p, o in g.triples((URIRef('http://example.com/Patient11'), URIRef('http://example.com/paid'), Literal(True, datatype=XSD.boolean))):
+		i += 1
+		print(f"{s} is the subject")
+		print(f"{p} is a predicate")
+		print(f"{o} is an object")
+		
+	assert i == 1
+		
 
 def test_create_write_date(Daterml, Datecsv,  outputfile_date_ttl):
 		rml = Rml()
