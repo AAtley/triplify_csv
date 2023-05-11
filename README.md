@@ -163,4 +163,10 @@ The resulting triples in turtle syntax in the 'contactstriples.ttl' file would l
 	    foaf:interest "https://en.m.wikipedia.org/wiki/Spam\_(food)" ;
 	    foaf:name "Mr Bun" .
 
- 
+If you wanted this serialised to json-ld format instead you could use the following command ...
+
+```
+triplify_csv -m 'contactsmap.ttl' -c 'Contacts.csv' -o 'contactstriples.json' -f 'json-ld'
+```
+
+ triplify_csv uses rdflib and can output to all the serialisation formats that [rdflib](https://pypi.org/project/rdflib/) provides. (See also 'format' [here](https://rdflib.readthedocs.io/en/stable/apidocs/rdflib.html#rdflib.Graph.serialize))

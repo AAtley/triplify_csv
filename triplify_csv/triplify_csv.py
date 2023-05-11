@@ -486,7 +486,10 @@ class Rml:
 @click.option("--dateformat", "-d",
               help="If you have dates in your CSV files this describes the format they are in. See 'strptime format codes'. Defaults to '%Y-%m-%d', for example 2022-01-31.",     
               default="%Y-%m-%d")
-def process(mapfile, csvfile, outfile, separator=',', encoding='utf-8', dateformat='%Y-%m-%d'):
+@click.option("--format", "-f",
+              help='One of the inbuilt serialisation formats that RDFLIB supports, one of "xml", "n3", "turtle", "nt", "pretty-xml", "trix", "trig", "nquads", "json-ld" or "hext". Defaults to "n3".',     
+              default="n3")              
+def process(mapfile, csvfile, outfile, separator=',', encoding='utf-8', dateformat='%Y-%m-%d', format='n3'):
 	""" Generates triples or n-quads in outfile from one or more CSV files according to the configuration in the Triples Map configuration file. """
 	csvfiles = list(csvfile)
 	if not sys.stdin.isatty():
@@ -501,7 +504,7 @@ def process(mapfile, csvfile, outfile, separator=',', encoding='utf-8', dateform
 	s.loadFile(mapfile, csvfiles, options)
 	s.create_triples()
 	try:
-	    s.write_file(outfile)
+	    s.write_file(outfile, format)
 	except Exception as err:
 	    print("Error outputting graph: {0}".format(err))
 	    raise

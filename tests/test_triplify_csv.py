@@ -321,6 +321,31 @@ def test_triplify_csv_examples(tmp_path, Student, R2RMLTC0007a):
 		assert i == 1
 		
 		
+def test_triplify_csv_examples_json_ld(tmp_path, Student, R2RMLTC0007a):
+	runner = CliRunner()
+	with runner.isolated_filesystem(temp_dir=tmp_path) as td:
+		# output to outf_name
+		outf_name = 'outfile.json'
+		fmt = 'json-ld'
+		try:
+			result = runner.invoke(process, ['-m', R2RMLTC0007a, '-c', Student, '-o', outf_name, '-f', fmt])
+		except Exception as err:
+			print("Error outputting graph: {0}".format(err))
+			
+			
+		assert result.exit_code == 0
+		
+		# use td and outfile to read graph and test it has a triple
+		g = Graph()
+		g.parse(outf_name, format="json-ld")
+		
+		i = 0
+		for subj, pred, obj in g:
+			#count them
+			i+=1
+		assert i == 1
+		
+		
 
 	
 def test_create_triples7a(R2RMLTC0007a, Student):
