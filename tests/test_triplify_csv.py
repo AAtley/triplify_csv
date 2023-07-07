@@ -25,9 +25,14 @@ def path_as_str(tmp_path_factory, outfile):
 
 
 @pytest.fixture
+def R2RMLTC0003c():
+	return DATA_DIR + "/R2RMLTC0003c.ttl"
+	
+
+@pytest.fixture
 def R2RMLTC0007a():
 	return DATA_DIR + "/R2RMLTC0007a.ttl"
-	
+
 
 @pytest.fixture
 def R2RMLTC0007b():
@@ -151,6 +156,11 @@ def labels_es():
 def datatypesCsv():
 	return DATA_DIR + "/Patient.csv"
 		
+		
+@pytest.fixture
+def student3c():
+	return DATA_DIR + "/Student3c/Student.csv"
+	
 
 @pytest.fixture(scope='session')
 def outputfile_ttl(tmp_path_factory):
@@ -240,6 +250,11 @@ def outputfile_16d(tmp_path_factory):
 @pytest.fixture(scope='session')
 def outputfile_16e(tmp_path_factory):
 	return path_as_str(tmp_path_factory,"output16e.ttl")
+	
+	
+@pytest.fixture(scope='session')
+def outputfile_3c(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output3c.ttl")
 	
 	
 @pytest.fixture
@@ -346,7 +361,25 @@ def test_triplify_csv_examples_json_ld(tmp_path, Student, R2RMLTC0007a):
 		assert i == 1
 		
 		
-
+def test_load_create_write_out3c(R2RMLTC0003c, student3c, outputfile_3c):
+	rml = Rml()
+	# load one rml and 1 or more csvs
+	rml.loadFile(R2RMLTC0003c, [student3c])
+	rml.create_triples()
+	
+	rml.write_file(outputfile_3c)
+	print("location is " + outputfile_3c)
+	g = Graph()
+	g.parse(outputfile_3c, format="ttl")
+	i = 0
+	for s, p, o in g.triples((URIRef('http://example.com/Student10'), FOAF.name, Literal('Venus Williams'))):
+		i += 1
+		print(f"{s} is the subject")
+		print(f"{p} is a predicate")
+		print(f"{o} is an object")
+		s
+	assert i == 1
+	i = 0
 	
 def test_create_triples7a(R2RMLTC0007a, Student):
 	rml = Rml()
@@ -1260,4 +1293,3 @@ def test_create_write_separator(seprml, sepcsv, outputfile_sep_ttl):
 		
 	assert i == 1
 				
-

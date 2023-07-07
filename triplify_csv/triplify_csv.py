@@ -365,8 +365,6 @@ class Rml:
 									if rr('datatype') in pom[rr('objectMap')]:
 										lit_datatype = pom[rr('objectMap')][rr('datatype')]
 										
-										
-								
 							# if objectmap in pom and key of this om is also in tmap then it is a refobjmap
 							if rr('objectMap') in pom and str(pom[rr('objectMap')]) in tmaps.keys() and rr('parentTriplesMap') in tmaps[str(pom[rr('objectMap')])] and tmaps[str(pom[rr('objectMap')])][rr('parentTriplesMap')] in tmaps.keys():
 								rom = pom[rr('objectMap')]
@@ -408,10 +406,32 @@ class Rml:
 											
 											object = URIRef(self.get_Uri_From_Template(ptmSubjectTemplate,record))
 							
+							# R2RMLTC0003c
+							elif rr('objectMap') in pom and rr('template') in pom[rr('objectMap')]:
+								ocols = []
+								objmap_template = pom[rr('objectMap')][rr('template')]
+								for match in re.finditer(r'{"([^>]+?)"}',objmap_template):
+									ocols.append(match.group(0).strip('{}"'))
+								
+								
+								
+								if set(ocols).issubset(csvinfo.columnNames):
+									
+									o = re.sub('[{"}]','',objmap_template)
+									for ocol in ocols:			
+										o = o.replace(ocol,urllib.parse.quote(str(row[ocol])))
+										
+									#object = URIRef(o)
+									object = self.get_literal(o)
+									
+									print('object is ' + object)
+								
 							elif len(pom_column) > 0 and pom_column in row.keys():
+								print('in elif')
 								
 								object = self.get_literal(row[pom_column],csvinfo.options.dateformat, literal_lang, lit_datatype)
 							else:
+								print('in else')
 								object = URIRef(pom_object)
 	
 							# add to Dataset for quads if non-default graph else add just add triple
@@ -514,4 +534,3 @@ def process(mapfile, csvfile, outfile, separator=',', encoding='utf-8', dateform
 	
 if __name__ == "__main__":
 	process()
-
