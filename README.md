@@ -75,7 +75,7 @@ R2RML was not designed for this purpose. R2RML is '.. a language for expressing 
 
 For a complete list of what parts of the R2RML language are supported see the examples in the /tests folder and refer to the R2RML test cases document ([https://www.w3.org/TR/rdb2rdf-test-cases/](https://www.w3.org/TR/rdb2rdf-test-cases/)). As of version 0.3.0 the test cases supported are
 
-- R2RMLTC0003c - Using 'rr:template' within objectmaps to build uo string literals for object values
+- R2RMLTC0003c - Using 'rr:template' within objectmaps to build up string literals for object values
 - R2RMLTC0007a - Typing resources by relying on rdf:type predicate
 - R2RMLTC0007b - Assigning triples to Named Graphs
 - R2RMLTC0007c - One column mapping, using rr:class
