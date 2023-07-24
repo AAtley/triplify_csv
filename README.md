@@ -88,6 +88,7 @@ For a complete list of what parts of the R2RML language are supported see the ex
 - R2RMLTC0008b - Generation of triples referencing object map
 - R2RMLTC0008c - Generation of triples by using multiple predicateMaps within a rr:predicateObjectMap
 - R2RMLTC0009a - Generation of triples from foreign key relations
+	- Testing added about creating triples from foreign key relations, even for self-joins to represent things like hierarchy in the same "table"/csv
 - R2RMLTC0015a - Generation of language tags for plain literals from a CSV 'table' with language information
 	- note: this test uses a separate CSV file for each language and differs from the original test case (in the [rdf-test-cases page](https://www.w3.org/TR/rdb2rdf-test-cases/)) which uses 'rr:sqlQuery' to select tags in each language from a single table.
 - R2RMLTC0016a to R2RMLTC0016d, setting data types as in these tests for string, integer, real, float, date, timestamp and boolean.  

@@ -309,6 +309,10 @@ class Rml:
 				self.errors.append('A csv for table {} was not found'.format(logical_table))
 				continue
 				
+			 
+			# bookmark the row we are on as if csv 'table' has foreign key to itself the row position of the 'child' table will be lost
+			# this allows the return the the original row after the same 'table' is scanned as a look up for that FK value
+			rowbookmark = 0
 			
 			# only continue if fieldnames in cols named of template all appear in column names of table in csv
 			if set(cols).issubset(csvinfo.columnNames):
@@ -317,7 +321,9 @@ class Rml:
 				
 				
 				next(rdr) # skip the headers
+				rowbookmark = rowbookmark + 1
 				for row in rdr:				
+					rowbookmark = rowbookmark + 1
 					# if subjectmap's graph given by template, col names by row values
 					if rr('graphMap') in tmaps[tk][rr('subjectMap')]:
 						if rr('template') in tmaps[tk][rr('subjectMap')][rr('graphMap')]:
@@ -405,6 +411,15 @@ class Rml:
 											ptmSubjectTemplate = tmaps[ptm][rr('subjectMap')][rr('template')]
 											
 											object = URIRef(self.get_Uri_From_Template(ptmSubjectTemplate,record))
+											
+											# point row back at the row it was looking at
+											rdr = csvinfo.get_restarted_reader()
+											resetrow = 0
+											
+											while resetrow < rowbookmark:
+												next(rdr) # skip the headers
+												resetrow = resetrow + 1
+											
 							
 							# R2RMLTC0003c
 							elif rr('objectMap') in pom and rr('template') in pom[rr('objectMap')]:
@@ -431,7 +446,6 @@ class Rml:
 								
 								object = self.get_literal(row[pom_column],csvinfo.options.dateformat, literal_lang, lit_datatype)
 							else:
-								print('in else')
 								object = URIRef(pom_object)
 	
 							# add to Dataset for quads if non-default graph else add just add triple

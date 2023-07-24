@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "triplify_csv"
-version = "0.5.0"
+version = "0.5.1"
 description = "A tool to generate triples from CSV files according to a configuration file."
 authors = ["Adrian Atley"]
 license = "BSD-3-Clause"

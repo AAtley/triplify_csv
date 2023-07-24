@@ -90,6 +90,11 @@ def R2RMLTC0009a():
 	
 	
 @pytest.fixture
+def map_selfref():
+	return DATA_DIR + "/map.ttl"	
+		
+	
+@pytest.fixture
 def R2RMLTC0015a():
 	return DATA_DIR + "/R2RMLTC0015a.ttl"
 	
@@ -127,6 +132,18 @@ def Student2():
 @pytest.fixture
 def Student3():
 	return DATA_DIR + "/Student3/Student.csv"
+	
+@pytest.fixture
+def Student4():
+	return DATA_DIR + "/Student4/Student.csv"
+	
+@pytest.fixture
+def Sport1():
+	return DATA_DIR + "/Student4/Sport.csv"
+	
+@pytest.fixture
+def Table_selfref():
+	return DATA_DIR + "/Table.csv"
 
 @pytest.fixture
 def Sport():
@@ -222,6 +239,15 @@ def outputfile_9a(tmp_path_factory):
 	return path_as_str(tmp_path_factory,"output9a.ttl")
 
 
+@pytest.fixture(scope='session')
+def outputfile_9amultfk(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"output9amultfk.ttl")
+
+@pytest.fixture(scope='session')
+def outputfile_selfref(tmp_path_factory):
+	return path_as_str(tmp_path_factory,"outputselfref.ttl")
+	
+	
 @pytest.fixture(scope='session')
 def outputfile_15a(tmp_path_factory):
 	return path_as_str(tmp_path_factory,"output15a.ttl")
@@ -1097,6 +1123,150 @@ def test_create_write_out9a(R2RMLTC0009a, Student3, Sport, outputfile_9a):
 		for s, p, o in g.triples((URIRef('http://example.com/resource/sport_100'), URIRef('http://www.w3.org/2000/01/rdf-schema#label'), Literal('Tennis'))):
 			i += 1
 		assert i == 1
+
+def test_create_write_out9a_multFKs(R2RMLTC0009a, Student4, Sport1, outputfile_9amultfk):
+		rml = Rml()
+		# load one rml and 1 or more csvs
+		rml.loadFile(R2RMLTC0009a, [Student4, Sport1])
+		
+		tmaps = rml.tmaps()
+		
+		# test some config values
+		for x in rml.csvInfoList:
+			print(x.tablename)
+		rml.create_triples()
+		print(rml.errors)
+		rml.write_file(outputfile_9amultfk, format="ttl")
+		g = Graph()
+		g.parse(outputfile_9amultfk, format="ttl") 
+		
+		# check triple count
+		i = 0
+		for s, p, o in g.triples((None, None, None)):
+			i += 1
+			print(f"{s} is the subject")
+			print(f"{p} is a predicate")
+			print(f"{o} is an object")
+		assert i == 7
+		
+		# check VW's FOAF.name
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/student_10'), FOAF.name, Literal('Venus Williams'))):
+			i += 1
+		assert i == 1
+		
+		# check DM's FOAF.name
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/student_20'), FOAF.name, Literal('Demi Moore'))):
+			i += 1
+		assert i == 1
+		
+		# check GK's FOAF.name
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/student_30'), FOAF.name, Literal('George Clooney'))):
+			i += 1
+		assert i == 1
+		
+		# check GK practices Golf
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/student_30'), URIRef('http://example.com/ontology/practises'), URIRef('http://example.com/resource/sport_200'))):
+			i += 1
+		assert i == 1
+		
+		# check VW practices Tennis
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/student_10'), URIRef('http://example.com/ontology/practises'), URIRef('http://example.com/resource/sport_100'))):
+			i += 1
+		assert i == 1
+		
+		# check Tennis
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/sport_100'), URIRef('http://www.w3.org/2000/01/rdf-schema#label'), Literal('Tennis'))):
+			i += 1
+		assert i == 1
+		
+		# check Golf
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/sport_200'), URIRef('http://www.w3.org/2000/01/rdf-schema#label'), Literal('Golf'))):
+			i += 1
+		assert i == 1
+
+
+def test_create_write_selfref(map_selfref, Table_selfref, outputfile_selfref):
+		rml = Rml()
+		
+		options = CsvOptions(delimiter='|')
+		# load one rml and 1 or more csvs
+		rml.loadFile(map_selfref, [Table_selfref], options)
+		
+		tmaps = rml.tmaps()
+		
+		rml.create_triples()
+		print(rml.errors)
+		rml.write_file(outputfile_selfref, format="ttl")
+		g = Graph()
+		g.parse(outputfile_selfref, format="ttl") 
+		
+		# check triple count
+		i = 0
+		for s, p, o in g.triples((None, None, None)):
+			i += 1
+			print(f"{s} is the subject")
+			print(f"{p} is a predicate")
+			print(f"{o} is an object")
+		assert i == 8
+		
+		# check FOAF.person
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/person_10'), RDF.type, FOAF.Person)):
+			i += 1
+		assert i == 1
+		
+		# check FOAF.person
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/person_20'), RDF.type, FOAF.Person)):
+			i += 1
+		assert i == 1
+		
+		# check FOAF.person
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/person_30'), RDF.type, FOAF.Person)):
+			i += 1
+		assert i == 1
+		
+		# check FOAF.person
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/person_40'), RDF.type, FOAF.Person)):
+			i += 1
+		assert i == 1
+		
+		# check FOAF.knows
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/person_10'), FOAF.knows, URIRef('http://example.com/resource/person_20'))):
+			i += 1
+		assert i == 1
+		
+		# check FOAF.knows
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/person_20'), FOAF.knows, URIRef('http://example.com/resource/person_10'))):
+			i += 1
+		assert i == 1
+		
+		# check FOAF.knows
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/person_30'), FOAF.knows, URIRef('http://example.com/resource/person_10'))):
+			i += 1
+		assert i == 1
+		
+		# check FOAF.knows
+		i = 0
+		for s, p, o in g.triples((URIRef('http://example.com/resource/person_40'), FOAF.knows, URIRef('http://example.com/resource/person_30'))):
+			i += 1
+		assert i == 1
+		
+		
+
+
 
 def test_load_create_write_out15a(R2RMLTC0015a, labels_en, labels_es, outputfile_15a):
 	rml = Rml()
